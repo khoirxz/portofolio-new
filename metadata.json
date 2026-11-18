@@ -1,0 +1,6 @@
+{
+  "name": "KALA.PX — Portofolio Monokrom",
+  "description": "Portofolio kreatif bergaya pixelated hitam-putih dengan animasi transisi halaman yang halus dan estetik.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

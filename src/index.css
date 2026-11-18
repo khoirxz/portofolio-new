@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-pixel: "Pixelify Sans", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, .font-pixel-display {
+    font-family: var(--font-pixel);
+  }
+}
+
+/* Subtle 1-bit pixel dither texture for monochrome framing */
+.pixel-dither-bg {
+  background-image:
+    radial-gradient(rgba(128, 128, 128, 0.16) 1px, transparent 1px),
+    radial-gradient(rgba(128, 128, 128, 0.16) 1px, transparent 1px);
+  background-size: 4px 4px;
+  background-position: 0 0, 2px 2px;
+}
+
+/* Crisp pixel grid lines for graphic frames */
+.pixel-grid-overlay {
+  background-image:
+    linear-gradient(to right, rgba(128, 128, 128, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Marquee animation using GPU compositor transform only */
+@keyframes marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  animation: marquee-scroll 28s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
