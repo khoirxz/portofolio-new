@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
 export type SectionId = 'intro' | 'karya' | 'riwayat' | 'footer';
 
@@ -17,6 +17,7 @@ const NAV_LINKS: { label: string; id: SectionId }[] = [
 ];
 
 export function Navbar({ activeSection, onScrollToSection }: NavbarProps) {
+  const shouldReduceMotion = useReducedMotion();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleSelect = (id: SectionId) => {
@@ -28,8 +29,11 @@ export function Navbar({ activeSection, onScrollToSection }: NavbarProps) {
     <header className="sticky top-0 z-40 w-full px-4 sm:px-6 pt-3 pointer-events-none">
       <div className="pointer-events-auto max-w-[1200px] mx-auto bg-[#F6F6F4]/95 dark:bg-[#0B0B0B]/95 backdrop-blur-sm border-2 border-[#0A0A0A] dark:border-[#F5F5F3] shadow-[4px_4px_0_0_#0A0A0A] dark:shadow-[4px_4px_0_0_#2C2C2C] px-4 sm:px-5 h-14 flex items-center justify-between gap-8">
         {/* Zone 1: Brand Wordmark */}
-        <a
+        <motion.a
           href="#intro"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
           onClick={(e) => {
             e.preventDefault();
             handleSelect('intro');
@@ -37,7 +41,7 @@ export function Navbar({ activeSection, onScrollToSection }: NavbarProps) {
           className="font-pixel-display text-lg font-bold tracking-wider px-2.5 py-1 bg-[#0A0A0A] text-[#F6F6F4] dark:bg-[#F5F5F3] dark:text-[#080808] whitespace-nowrap shrink-0 hover:opacity-85 transition-opacity duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A0A0A] dark:focus-visible:outline-[#F5F5F3]"
         >
           KALA.PX
-        </a>
+        </motion.a>
 
         {/* Zone 2: Stepped Monochrome Pixel Nav Cells */}
         <nav

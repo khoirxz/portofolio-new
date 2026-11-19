@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ArrowRight, Check, Download } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { Navbar, SectionId } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ResilientImage } from './components/ResilientImage';
@@ -26,7 +26,30 @@ const FILTER_OPTIONS: FilterOption[] = [
   'Eksperimen Pixel',
 ];
 
+const listContainerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.085,
+      delayChildren: 0.04,
+    },
+  },
+};
+
+const listItemVariants: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.34,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
+
 export default function App() {
+  const shouldReduceMotion = useReducedMotion();
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [activeSection, setActiveSection] = useState<SectionId>('intro');
   const [activeFilter, setActiveFilter] = useState<FilterOption>('Semua');
@@ -127,9 +150,9 @@ export default function App() {
             </div>
 
             {/* Minimalist Profile Row + Download CV CTA */}
-            <div className="mt-8 pt-8 border-t border-[#D4D4D0] dark:border-[#242424] flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="flex items-center gap-5">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 border border-[#0A0A0A] dark:border-[#F5F5F3] bg-[#FFFFFF] dark:bg-[#111111] overflow-hidden">
+            <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-[#D4D4D0] dark:border-[#242424] flex flex-col md:flex-row md:items-center justify-between gap-5 md:gap-6">
+              <div className="grid grid-cols-[76px_1fr] sm:grid-cols-[112px_1fr] items-center sm:items-start gap-x-4 sm:gap-x-5 gap-y-3 sm:gap-y-1.5">
+                <div className="w-[76px] h-[76px] sm:w-28 sm:h-28 sm:row-span-2 shrink-0 border border-[#0A0A0A] dark:border-[#F5F5F3] bg-[#FFFFFF] dark:bg-[#111111] overflow-hidden">
                   <ResilientImage
                     src={HERO_MEDIA.image}
                     alt={HERO_MEDIA.alt}
@@ -138,24 +161,25 @@ export default function App() {
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <h1 className="font-pixel-display text-2xl sm:text-3xl font-bold tracking-tight text-[#0A0A0A] dark:text-[#FFFFFF]">
+                <div className="space-y-1 min-w-0">
+                  <h1 className="font-pixel-display text-2xl sm:text-3xl font-bold tracking-tight text-[#0A0A0A] dark:text-[#FFFFFF] leading-tight">
                     {PROFILE.name}
                   </h1>
-                  <p className="text-xs font-mono text-[#525252] dark:text-[#A1A1AA]">
+                  <p className="text-xs font-mono text-[#525252] dark:text-[#A1A1AA] leading-relaxed">
                     {PROFILE.role} · {PROFILE.location}
                   </p>
-                  <p className="text-sm text-[#404040] dark:text-[#D4D4D4] max-w-lg leading-relaxed pt-1">
-                    Merancang antarmuka web presisi bergaya monokrom dengan animasi transisi yang halus dan ringan.
-                  </p>
                 </div>
+
+                <p className="col-span-2 sm:col-span-1 sm:col-start-2 text-sm text-[#404040] dark:text-[#D4D4D4] max-w-lg leading-relaxed">
+                  Merancang antarmuka web presisi bergaya monokrom dengan animasi transisi yang halus dan ringan.
+                </p>
               </div>
 
-              <div className="shrink-0">
+              <div className="w-full md:w-auto shrink-0">
                 <button
                   type="button"
                   onClick={handleDownloadCV}
-                  className="inline-flex items-center gap-2.5 px-6 py-3 text-sm font-medium bg-[#0A0A0A] text-[#F6F6F4] dark:bg-[#F5F5F3] dark:text-[#080808] border border-[#0A0A0A] dark:border-[#F5F5F3] hover:bg-transparent hover:text-[#0A0A0A] dark:hover:bg-transparent dark:hover:text-[#F5F5F3] transition-colors duration-150 whitespace-nowrap shrink-0 cursor-pointer"
+                  className="w-full md:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3 min-h-[44px] text-sm font-medium bg-[#0A0A0A] text-[#F6F6F4] dark:bg-[#F5F5F3] dark:text-[#080808] border border-[#0A0A0A] dark:border-[#F5F5F3] hover:bg-transparent hover:text-[#0A0A0A] dark:hover:bg-transparent dark:hover:text-[#F5F5F3] transition-colors duration-150 whitespace-nowrap shrink-0 cursor-pointer"
                 >
                   {cvDownloaded ? (
                     <>
@@ -220,14 +244,18 @@ export default function App() {
               </div>
             </div>
 
-            <div className="mt-8 border border-[#D4D4D0] dark:border-[#262626] bg-[#FFFFFF]/88 dark:bg-[#111111]/85 backdrop-blur-[2px] divide-y divide-[#D4D4D0] dark:divide-[#262626]">
+            <motion.div
+              key={activeFilter}
+              variants={listContainerVariants}
+              initial={shouldReduceMotion ? false : 'hidden'}
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.12 }}
+              className="mt-8 border border-[#D4D4D0] dark:border-[#262626] bg-[#FFFFFF]/88 dark:bg-[#111111]/85 backdrop-blur-[2px] divide-y divide-[#D4D4D0] dark:divide-[#262626]"
+            >
               {filteredProjects.map((project, index) => (
                 <motion.div
                   key={project.slug}
-                  layout
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  variants={listItemVariants}
                 >
                   <button
                     type="button"
@@ -267,7 +295,7 @@ export default function App() {
                   </button>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* 2B. Daftar Riwayat Kerja */}
@@ -282,15 +310,16 @@ export default function App() {
             </div>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              variants={listContainerVariants}
+              initial={shouldReduceMotion ? false : 'hidden'}
+              whileInView="visible"
               viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="border border-[#D4D4D0] dark:border-[#262626] bg-[#FFFFFF]/88 dark:bg-[#111111]/85 backdrop-blur-[2px] divide-y divide-[#D4D4D0] dark:divide-[#262626]"
             >
               {EXPERIENCES.map((exp) => (
-                <div
+                <motion.div
                   key={exp.period + exp.organization}
+                  variants={listItemVariants}
                   className="p-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-baseline"
                 >
                   <div className="md:col-span-3 font-mono text-xs text-[#525252] dark:text-[#A1A1AA] tabular-nums">
@@ -307,7 +336,7 @@ export default function App() {
                   <div className="md:col-span-5 text-sm text-[#404040] dark:text-[#D4D4D4] leading-relaxed">
                     {exp.outcome}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </motion.div>
           </div>
